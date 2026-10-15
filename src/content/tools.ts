@@ -49,6 +49,7 @@ const defs: ToolDef[] = [
 
 	{ id: 'aws', name: 'AWS', category: 'Infra' },
 	{ id: 'github-actions', name: 'GitHub Actions', category: 'Infra' },
+	{ id: 'vercel', name: 'Vercel', category: 'Infra' },
 
 	{ id: 'jest', name: 'Jest', category: 'Testing' },
 	{ id: 'cypress', name: 'Cypress', category: 'Testing' },

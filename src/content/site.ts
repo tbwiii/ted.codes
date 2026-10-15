@@ -4,7 +4,7 @@ export const site = {
 	name: 'Ted Waller',
 	title: 'Full Stack Developer',
 	description:
-		'Ted Waller is a full stack developer specializing in web apps and component architecture. Making stuff for the web since 2005.',
+		'Ted Waller is a full stack developer specializing in web apps, component architecture, and agentic workflows. Making stuff for the web since 2005.',
 	since: 2005,
 	url: 'https://ted.codes'
 };

@@ -1,14 +1,31 @@
 <script lang="ts">
 	import { site } from '$content/site';
 
-	// *word* marks a neon highlight.
+	// *a phrase* marks a neon highlight; punctuation after the closing * stays unlit.
 	const lines = [
-		"I'm a *Full* *Stack* *Developer* specializing in *web* *apps* and *component* *architecture.*",
-		`Making stuff for the web since *'${String(site.since).slice(2)}.*`
+		"I'm a *Full Stack Developer* specializing in *web apps*, *component architecture*, and *agentic workflows*.",
+		`Making stuff for the web since *'${String(site.since).slice(2)}*.`
 	];
 
+	// Highlighted phrases alternate between neon pink and cyan.
+	const glows = ['#ff2fd6', '#3ef2ff'];
+	let hotCount = 0;
+
 	const parsed = lines.map((line) =>
-		line.split(' ').map((w) => ({ text: w.replace(/\*/g, ''), hot: w.startsWith('*') }))
+		line
+			// Keep a phrase's inner spaces from splitting it into separate tokens.
+			.replace(/\*[^*]+\*/g, (m) => m.replace(/ /g, '\u00a0'))
+			.split(' ')
+			.map((token) => {
+				const m = token.match(/^\*(.+)\*(.*)$/);
+				if (!m) return { text: token, hot: false, tail: '', glow: undefined };
+				return {
+					text: m[1].replace(/\u00a0/g, ' '),
+					hot: true,
+					tail: m[2],
+					glow: glows[hotCount++ % glows.length]
+				};
+			})
 	);
 
 	const years = new Date().getFullYear() - site.since;
@@ -18,7 +35,10 @@
 	{#each parsed as words, l}
 		<p class="line" class:small={l > 0}>
 			{#each words as word}
-				<span class="word" class:hot={word.hot}>{word.text}</span>{' '}
+				<span class="chunk"
+					><span class="word" class:hot={word.hot} style:--glow={word.glow}>{word.text}</span
+					>{word.tail}</span
+				>{' '}
 			{/each}
 		</p>
 	{/each}
@@ -50,13 +70,22 @@
 		font-size: clamp(1.5rem, 3.8vw, 3rem);
 	}
 
+	/* Keeps trailing punctuation glued to its word so a comma never starts a line. */
+	.chunk {
+		white-space: nowrap;
+	}
+
 	.word {
 		display: inline-block;
 	}
 
 	.hot {
 		color: #fff;
-		text-shadow: var(--neon-pink);
+		text-shadow:
+			0 0 0.05em #fff,
+			0 0 0.2em var(--glow),
+			0 0 0.5em var(--glow),
+			0 0 1.2em color-mix(in srgb, var(--glow) 50%, transparent);
 	}
 
 	.counter {
