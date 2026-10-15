@@ -3,7 +3,7 @@ title: My Resume
 order: 5
 url: https://resume.ted.codes
 tool: react
-tech: [React, Vercel, shadcn/ui, MagicUI, CSS Animations, Responsive]
+tech: [React, TypeScript, Vite, Tailwind, shadcn/ui, MagicUI, Framer Motion, Vercel, Responsive, Print Styles]
 role: Design, develop, deploy.
 ---
 
