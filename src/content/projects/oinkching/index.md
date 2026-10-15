@@ -1,6 +1,6 @@
 ---
 title: OinkChing
-order: 2
+order: 3
 tool: vue
 tech: [VueJS, Nuxt, Strapi, GraphQL, PostgreSQL, Vercel, AWS, Heroku]
 role: Everything. Design, planning, front end, back end, deploys, monitoring, database management, etc.

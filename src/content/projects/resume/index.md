@@ -1,6 +1,6 @@
 ---
 title: My Resume
-order: 4
+order: 5
 url: https://resume.ted.codes
 tool: react
 tech: [React, Vercel, shadcn/ui, MagicUI, CSS Animations, Responsive]

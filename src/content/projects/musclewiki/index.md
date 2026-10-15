@@ -1,6 +1,6 @@
 ---
 title: MuscleWiki
-order: 1
+order: 2
 url: https://musclewiki.com/
 tool: react
 tech: [Figma, Django, SCSS, React, Docker]
