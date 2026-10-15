@@ -107,10 +107,10 @@
 		position: relative;
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: 3.5rem 4rem;
+		gap: 2.5rem 4rem;
 		align-items: center;
 		max-width: 76rem;
-		margin: 0 auto 11rem;
+		margin: 0 auto 7.25rem;
 		padding: 0 1.25rem;
 	}
 
@@ -154,14 +154,15 @@
 		position: relative;
 		display: grid;
 		gap: 1.6rem;
-		padding: clamp(2.2rem, 5vw, 3rem) clamp(1.4rem, 4vw, 2.75rem) clamp(1.8rem, 4vw, 2.5rem);
+		/* Top padding scales with the title (8vw) so the tilted script never sits on the first line. */
+		padding: clamp(3.4rem, 8.5vw, 4.75rem) clamp(1.4rem, 4vw, 2.75rem) clamp(1.8rem, 4vw, 2.5rem);
 		border-radius: 1rem;
 		font-size: 1.05rem;
 		line-height: 1.65;
 		color: #f5ebff;
 		background:
 			linear-gradient(155deg, #ff2fd62e, transparent 45%),
-			color-mix(in oklab, #2a0f3f 70%, transparent);
+			color-mix(in oklab, #1c0a2c 88%, transparent);
 		backdrop-filter: blur(14px);
 		-webkit-backdrop-filter: blur(14px);
 		border: 1px solid #ffd6f470;

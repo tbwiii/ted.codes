@@ -126,9 +126,7 @@
 		-webkit-background-clip: text;
 		-webkit-text-stroke: 0.012em #c9d6f0;
 		filter: drop-shadow(0 0 0.04em #8ba2d0) drop-shadow(0 0.04em 0.12em #165ff3);
-		animation:
-			letter-in 1.1s var(--ease-out-expo) calc(0.35s + var(--i) * 70ms) both,
-			glitch 6s steps(1) calc(4s + var(--i) * 0.4s) infinite;
+		animation: letter-in 1.1s var(--ease-out-expo) calc(0.35s + var(--i) * 70ms) both;
 	}
 
 	/* A sheen sweeping across the chrome. */
@@ -167,9 +165,7 @@
 		transform: rotate(-7deg);
 		margin-top: -0.35em;
 		padding: 0 0.3em 0.2em;
-		animation:
-			write 1.4s cubic-bezier(0.65, 0, 0.35, 1) 1.1s both,
-			flicker 7s linear 3s infinite;
+		animation: write 1.4s cubic-bezier(0.65, 0, 0.35, 1) 1.1s both;
 	}
 
 	.cue {
@@ -199,22 +195,6 @@
 		}
 	}
 
-	@keyframes glitch {
-		0%,
-		96% {
-			transform: none;
-		}
-		97% {
-			transform: translateX(0.04em) scaleY(0.08) skewX(40deg);
-		}
-		98% {
-			transform: translateX(-0.03em);
-		}
-		99% {
-			transform: scaleY(0.5) skewX(-20deg);
-		}
-	}
-
 	@keyframes sheen {
 		0%,
 		60% {
@@ -233,20 +213,6 @@
 		to {
 			clip-path: inset(-60% -20% -60% -20%);
 			opacity: 1;
-		}
-	}
-
-	@keyframes flicker {
-		0%,
-		91%,
-		93%,
-		96%,
-		100% {
-			opacity: 1;
-		}
-		92%,
-		95% {
-			opacity: 0.35;
 		}
 	}
 

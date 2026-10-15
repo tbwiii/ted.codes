@@ -31,7 +31,7 @@
 	.mission {
 		max-width: 68rem;
 		margin: 0 auto;
-		padding: 18vh 1.5rem 10vh;
+		padding: 12vh 1.5rem 6vh;
 		display: grid;
 		gap: 2.5rem;
 		text-align: center;

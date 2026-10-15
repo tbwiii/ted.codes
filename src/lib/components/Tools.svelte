@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { categories, tools, type Category } from '$content/tools';
 	import SectionTitle from './SectionTitle.svelte';
 
@@ -19,6 +20,20 @@
 
 	let grid: HTMLElement;
 
+	// Tiles keep their place and the rest dim, so the sticky filter bar can leave the
+	// matches off-screen. Bring the first match into view if it isn't.
+	async function select(f: (typeof filters)[number]) {
+		active = f;
+		await tick();
+		const first = grid.querySelector<HTMLElement>('.tile.on');
+		if (!first) return;
+		const { top, bottom } = first.getBoundingClientRect();
+		const clearOfBar = 150; // floating header + sticky filters
+		if (top < clearOfBar || bottom > window.innerHeight) {
+			first.scrollIntoView({ block: 'center' });
+		}
+	}
+
 	// One pointer handler drives the spotlight on every tile, so the glow bleeds across neighbors.
 	function spotlight(e: PointerEvent) {
 		for (const tile of grid.querySelectorAll<HTMLElement>('.tile')) {
@@ -34,7 +49,7 @@
 
 	<div class="filters" role="group" aria-label="Highlight tools by category">
 		{#each filters as f (f)}
-			<button aria-pressed={active === f} class:active={active === f} onclick={() => (active = f)}>
+			<button aria-pressed={active === f} class:active={active === f} onclick={() => select(f)}>
 				{f}
 				<span class="count"
 					>{f === 'All' ? tools.length : tools.filter((t) => t.category === f).length}</span
@@ -70,14 +85,23 @@
 	}
 
 	.filters {
+		position: sticky;
+		top: 5rem;
+		z-index: 20;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: 0.5rem;
-		margin-bottom: 2.5rem;
+		margin: 0 -1rem 1.25rem;
+		padding: 0.6rem 1rem;
+		background: #0b0616b3;
+		backdrop-filter: blur(14px);
+		-webkit-backdrop-filter: blur(14px);
+		border-block: 1px solid #ffffff10;
 	}
 
-	@media (max-width: 640px) {
+	/* One scrolling row rather than a wrapped second row that eats the viewport while stuck. */
+	@media (max-width: 900px) {
 		.filters {
 			flex-wrap: nowrap;
 			justify-content: flex-start;
@@ -153,17 +177,16 @@
 
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, min(9.5rem, calc((100% - 1.5rem) / 3)));
-		justify-content: center;
-		gap: 0.75rem;
+		grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+		gap: 0.6rem;
 	}
 
 	.tile {
 		--mx: -999px;
 		--my: -999px;
 		position: relative;
-		aspect-ratio: 1;
-		border-radius: 1.1rem;
+		aspect-ratio: 5 / 4;
+		border-radius: 0.9rem;
 		padding: 1px;
 		background:
 			radial-gradient(
@@ -200,16 +223,15 @@
 		box-shadow: 0 0 28px -6px #ff2fd6;
 	}
 
-	.tile.on .name {
-		opacity: 1;
-		transform: none;
-	}
-
 	.inner {
 		position: relative;
 		height: 100%;
-		display: grid;
-		place-items: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.55rem;
+		padding: 0.5rem;
 		border-radius: inherit;
 		overflow: hidden;
 		background:
@@ -236,8 +258,9 @@
 
 	img {
 		position: relative;
-		width: 42%;
-		max-height: 42%;
+		width: auto;
+		height: 2.1rem;
+		max-width: 60%;
 		object-fit: contain;
 		filter: drop-shadow(0 6px 14px #0009);
 		transition:
@@ -246,25 +269,18 @@
 	}
 
 	img.wide {
-		width: 68%;
+		max-width: 75%;
 	}
 
 	.name {
-		position: absolute;
-		bottom: 0.7rem;
-		left: 0;
-		right: 0;
+		position: relative;
+		max-width: 100%;
 		text-align: center;
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: #fff;
-		opacity: 0;
-		transform: translateY(8px);
-		transition:
-			opacity 0.3s,
-			transform 0.4s var(--ease-out-expo);
+		font-family: var(--font-display);
+		font-size: 0.8rem;
+		line-height: 1.2;
+		color: #e9e1ff;
+		overflow-wrap: anywhere;
 	}
 
 	.tile:hover .inner::before {
@@ -272,30 +288,32 @@
 	}
 
 	.tile:hover img {
-		transform: translateY(-12%) rotateY(-18deg) rotateX(10deg) scale(1.12);
-		filter: drop-shadow(0 0 18px #ff2fd6aa) drop-shadow(0 14px 12px #000c);
+		transform: translateY(-2px) scale(1.08);
+		filter: drop-shadow(0 0 12px #ff2fd6aa) drop-shadow(0 8px 8px #000a);
 	}
 
 	.tile:hover .name {
-		opacity: 1;
-		transform: none;
+		color: #fff;
 	}
 
-	@media (max-width: 480px) {
-		.name {
-			font-size: 0.56rem;
-			letter-spacing: 0.06em;
-			white-space: nowrap;
+	@media (max-width: 640px) {
+		.grid {
+			grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr));
 		}
 	}
 
-	@media (hover: none) {
-		.name {
-			opacity: 0.85;
+	@media (prefers-reduced-motion: reduce) {
+		.tile {
+			animation: none;
+		}
+		.tile,
+		img,
+		.filters button {
+			transition: none;
+		}
+		.tile:hover img,
+		.filters button:hover {
 			transform: none;
-		}
-		img {
-			transform: translateY(-10%);
 		}
 	}
 

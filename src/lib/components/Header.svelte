@@ -3,6 +3,35 @@
 	import { links } from '$content/site';
 
 	const visible = $derived(fx.heroProgress > 0.55);
+
+	// Section ids the nav links to, in page order.
+	const sectionIds = ['tools', 'projects'];
+	let activeId = $state<string | null>(null);
+
+	// Effects only run in the browser, so this is SSR-safe. A section is "active"
+	// while it intersects the middle band of the viewport (10% tall, centred).
+	$effect(() => {
+		if (!('IntersectionObserver' in window)) return;
+
+		const inBand = new Set<string>();
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (entry.isIntersecting) inBand.add(entry.target.id);
+					else inBand.delete(entry.target.id);
+				}
+				activeId = sectionIds.find((id) => inBand.has(id)) ?? null;
+			},
+			{ rootMargin: '-45% 0px -45% 0px' }
+		);
+
+		for (const id of sectionIds) {
+			const el = document.getElementById(id);
+			if (el) observer.observe(el);
+		}
+
+		return () => observer.disconnect();
+	});
 </script>
 
 <header class:visible>
@@ -11,8 +40,16 @@
 			<span class="tw">TW</span>
 		</a>
 		<div class="sections">
-			<a href="#tools">Tools</a>
-			<a href="#projects">Projects</a>
+			<a
+				href="#tools"
+				class:active={activeId === 'tools'}
+				aria-current={activeId === 'tools' ? 'location' : undefined}>Tools</a
+			>
+			<a
+				href="#projects"
+				class:active={activeId === 'projects'}
+				aria-current={activeId === 'projects' ? 'location' : undefined}>Projects</a
+			>
 		</div>
 		<div class="socials">
 			{#each links as link (link.label)}
@@ -105,7 +142,8 @@
 			box-shadow 0.2s;
 	}
 
-	.sections a:hover {
+	.sections a:hover,
+	.sections a.active {
 		color: #fff;
 		background: #ff2fd61f;
 		box-shadow: inset 0 0 0 1px #ff2fd660;
@@ -150,6 +188,12 @@
 		.sections a {
 			padding: 0.5rem 0.5rem;
 			letter-spacing: 0.08em;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sections a {
+			transition: none;
 		}
 	}
 </style>
