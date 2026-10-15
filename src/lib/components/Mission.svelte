@@ -86,7 +86,6 @@
 		@keyframes dim {
 			from {
 				opacity: 0.12;
-				filter: blur(3px);
 				transform: translateY(0.25em);
 			}
 		}
@@ -94,7 +93,6 @@
 			from {
 				opacity: 0.12;
 				text-shadow: none;
-				filter: blur(3px);
 				transform: translateY(0.25em);
 			}
 			60% {

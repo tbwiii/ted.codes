@@ -1,6 +1,10 @@
 <script lang="ts">
+	import { fx } from '$lib/fx.svelte';
+
 	const first = 'TED'.split('');
 	const last = 'WALLER'.split('');
+	// A few letters glitch once shortly after load; scrolling pauses it.
+	const glitched = new Set([1, 3, 6]);
 </script>
 
 <section class="hero" id="top">
@@ -9,12 +13,14 @@
 			<span class="blink">●</span> PLAYER 1 · EST. 2005
 		</p>
 
-		<h1 class="name" aria-label="Ted Waller">
+		<h1 class="name" class:scrolled={fx.heroProgress > 0.01} aria-label="Ted Waller">
 			{#each [first, last] as word, w}
 				<span class="word" aria-hidden="true">
 					{#each word as letter, i}
 						{@const n = w * first.length + i}
-						<span class="letter" style:--i={n} data-letter={letter}>{letter}</span>
+						<span class="letter" class:glitch={glitched.has(n)} style:--i={n} data-letter={letter}
+							>{letter}</span
+						>
 					{/each}
 				</span>
 			{/each}
@@ -66,7 +72,6 @@
 			to {
 				transform: translateY(-6vh) translateZ(420px);
 				opacity: 0;
-				filter: blur(6px);
 			}
 		}
 	}
@@ -121,19 +126,44 @@
 		position: relative;
 		display: inline-block;
 		color: transparent;
+		/* The stroke is drawn twice as wide because the chrome fill layer covers its inner half. That
+		   hides the seams where the variable font's contours overlap and keeps the rim outside. */
+		-webkit-text-stroke: 0.024em #c9d6f0;
+		filter: drop-shadow(0 0 0.04em #8ba2d0) drop-shadow(0 0.04em 0.12em #165ff3);
+		animation: letter-in 1.1s var(--ease-out-expo) calc(0.35s + var(--i) * 70ms) both;
+	}
+
+	.letter::before {
+		content: attr(data-letter);
+		position: absolute;
+		/* Wider than the glyph's advance box: background-clip: text can't paint past it, and italic
+		   letters overhang on the right. */
+		inset: 0 -0.2em 0 0;
+		text-align: left;
+		color: transparent;
+		-webkit-text-stroke: 0;
 		background: var(--chrome);
 		background-clip: text;
 		-webkit-background-clip: text;
-		-webkit-text-stroke: 0.012em #c9d6f0;
-		filter: drop-shadow(0 0 0.04em #8ba2d0) drop-shadow(0 0.04em 0.12em #165ff3);
-		animation: letter-in 1.1s var(--ease-out-expo) calc(0.35s + var(--i) * 70ms) both;
+	}
+
+	/* One short glitch on a few letters, a moment after the intro. Scrolling pauses it. */
+	.letter.glitch {
+		animation:
+			letter-in 1.1s var(--ease-out-expo) calc(0.35s + var(--i) * 70ms) both,
+			glitch 0.45s steps(1) calc(3.4s + var(--i) * 0.15s) 1;
+	}
+
+	.scrolled .letter.glitch {
+		animation-play-state: running, paused;
 	}
 
 	/* A sheen sweeping across the chrome. */
 	.letter::after {
 		content: attr(data-letter);
 		position: absolute;
-		inset: 0;
+		inset: 0 -0.2em 0 0;
+		text-align: left;
 		color: transparent;
 		-webkit-text-stroke: 0;
 		background: linear-gradient(105deg, transparent 40%, #ffffffd0 50%, transparent 60%) no-repeat;
@@ -192,6 +222,25 @@
 			opacity: 0;
 			transform: perspective(600px) translateZ(400px) translateY(-0.4em) rotateX(70deg);
 			filter: blur(12px);
+		}
+	}
+
+	@keyframes glitch {
+		0%,
+		100% {
+			transform: none;
+		}
+		20% {
+			transform: translateX(0.04em) scaleY(0.08) skewX(40deg);
+		}
+		40% {
+			transform: translateX(-0.03em);
+		}
+		60% {
+			transform: scaleY(0.5) skewX(-20deg);
+		}
+		80% {
+			transform: none;
 		}
 	}
 

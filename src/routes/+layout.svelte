@@ -71,6 +71,5 @@
 		background:
 			repeating-linear-gradient(transparent 0 2px, #00000012 2px 4px),
 			radial-gradient(ellipse at center, transparent 60%, #00000070 100%);
-		mix-blend-mode: multiply;
 	}
 </style>
