@@ -13,7 +13,7 @@ npm run check    # type check
 npm run build    # static site in ./build
 ```
 
-Deploys as a static site (`@sveltejs/adapter-static`). `netlify.toml` is set up for Netlify.
+Deploys as a static site (`@sveltejs/adapter-static`) on Cloudflare Workers static assets. `wrangler.jsonc` points at `./build`; `npm run deploy` publishes it, and `npm run cf-preview` serves the build locally under the Workers runtime.
 
 ## Adding a project
 
